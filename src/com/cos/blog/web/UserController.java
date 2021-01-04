@@ -67,7 +67,7 @@ public class UserController extends HttpServlet {
 			if(result == 1) {
 				response.sendRedirect("index.jsp");
 			}else {
-				Script.back(response, "가입오류");
+				Script.back(response, "회원가입 실패");
 			}
 
 		}

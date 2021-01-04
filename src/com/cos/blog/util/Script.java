@@ -9,12 +9,19 @@ public class Script {
 	
 	public static void back(HttpServletResponse resp, String msg) throws IOException { 		
 		
-		PrintWriter out = resp.getWriter();
-		out.println("<script>");
-		out.println("alert('"+msg+"')");
-		out.println("history.back();");
-		out.println("</script>");
-		out.flush();
+		PrintWriter out;
+		
+		try {
+			out =resp.getWriter();
+			out.println("<script>");
+			out.println("alert('"+msg+"')");
+			out.println("history.back();");
+			out.println("</script>");
+			out.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		
 	}
 	
