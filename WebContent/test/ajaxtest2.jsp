@@ -12,7 +12,7 @@
 <div id="box"></div>
 <script>
 	function idCheck(){
-		 $.ajax("http://localhost:8080/blog/ajax").done(function(data){
+		 $.ajax("http://localhost:8000/blog/ajax").done(function(data){//data는 응답받은 데이터가 들어온다.
 			alert(data);
 		 });
 	}

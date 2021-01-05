@@ -12,7 +12,7 @@
 <div id="box"></div>
 <script>
 	function idCheck(){
-		 fetch("http://localhost:8080/blog/ajax").then(function(data){
+		 fetch("http://localhost:8000/blog/ajax").then(function(data){ //data는 응답받은 데이터가 들어온다.
 			return data.text();
 		 }).then(function(data){
 			alert(data);

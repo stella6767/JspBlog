@@ -24,7 +24,7 @@
 				}
 		    }
 		  };
-		  xhttp.open("GET", "http://localhost:8080/blog/ajax", true);
+		  xhttp.open("GET", "http://localhost:8000/blog/ajax", true);
 		  xhttp.send();
 	}
 </script>
