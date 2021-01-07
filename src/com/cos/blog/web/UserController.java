@@ -96,6 +96,10 @@ public class UserController extends HttpServlet {
 				out.print("fail");
 			}
 			out.flush();
+		}else if(cmd.equals("logout")) {
+			HttpSession session = request.getSession();
+			session.invalidate();
+			response.sendRedirect("index.jsp");
 		}
 		
 		
