@@ -3,6 +3,7 @@ package com.cos.blog.domain.board;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -11,30 +12,30 @@ import com.cos.blog.domain.board.dto.SaveReqDto;
 
 public class BoardDao {
 	
-	Board board = new Board();
 
-	public Vector<Board> findAll() {
+	public List<Board> findAll(int page) {
 		
-		System.out.println("들감???");
 		// SELECT 해서 Board 객체를 컬렉션에 담아서 리턴
-		String sql = "SELECT * FROM board";
+		String sql = "SELECT * FROM board ORDER BY Id DESC LIMIT ?,4"; //0,4  4,4  8,4
 		Connection conn = DB.getConnection();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		Vector<Board> boards = new Vector<>();
+		List<Board> boards = new ArrayList<>();
 
 		try {
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, page*4); // 0 -> 0, 1 ->4, 2->8
 			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				board.setId(rs.getInt("id"));
-				board.setUserId(rs.getInt("userId"));
-				board.setTitle(rs.getString("title"));
-				board.setContent(rs.getString("content"));
-				board.setReadCount(rs.getInt("readCount"));
-				board.setCreateDate(rs.getTimestamp("createDate"));
-				
-				boards.add(board);
+			while (rs.next()) { // 커서를 이동하는 함수
+				Board board = Board.builder()
+						.id(rs.getInt("id"))
+						.title(rs.getString("title"))
+						.content(rs.getString("content"))
+						.readCount(rs.getInt("readCount"))
+						.userId(rs.getInt("userId"))
+						.createDate(rs.getTimestamp("createDate"))
+						.build();
+				boards.add(board);	
 			}
 			
 			return boards;

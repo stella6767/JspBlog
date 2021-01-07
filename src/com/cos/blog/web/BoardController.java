@@ -31,72 +31,61 @@ public class BoardController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doProcess(request, response);
-		
 
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-			doProcess(request, response);
+		doProcess(request, response);
 	}
-	
+
 	protected void doProcess(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		String cmd = request.getParameter("cmd");
 		BoardService boardService = new BoardService();
 		// http://localhost:8080/blog/board?cmd=saveForm
 		HttpSession session = request.getSession();
-		
-		if(cmd.equals("saveForm")) {
-			User principal = (User)session.getAttribute("principal");
-			if(principal != null) {
-				response.sendRedirect("board/saveForm.jsp");
-			}else {
-				response.sendRedirect("user/loginForm.jsp");
-			}			
-		}else if(cmd.equals("save")) {
+
+		if (cmd.equals("saveForm")) {
+			User principal = (User) session.getAttribute("principal");
+			if (principal != null) {
+				RequestDispatcher dis = request.getRequestDispatcher("board/saveForm.jsp");
+				dis.forward(request, response);
+			} else {
+				RequestDispatcher dis = request.getRequestDispatcher("user/loginForm.jsp");
+				dis.forward(request, response);
+			}
+		} else if (cmd.equals("save")) {
 			int userId = Integer.parseInt(request.getParameter("userId"));
 			String title = request.getParameter("title");
 			String content = request.getParameter("content");
-			
+
 			SaveReqDto dto = new SaveReqDto();
 			dto.setUserId(userId);
 			dto.setTitle(title);
 			dto.setContent(content);
 			int result = boardService.글쓰기(dto);
-			
-			if(result ==1) { //정상
-				response.sendRedirect("index.jsp");				
-			}else {
+
+			if (result == 1) { // 정상
+				response.sendRedirect("index.jsp");
+			} else {
 				Script.back(response, "글쓰기실패");
 			}
-		}else if(cmd.equals("list")) {
-			
-			List<Board> boards = boardService.목록보기();
-			
-			for (Board board : boards) {
-				System.out.println(board.toString());
-			}
-			
-			
-			if(boards != null) { //정상
-				request.setAttribute("boardlist", boards); //앞이 키값 뒤가 데이터!
-				RequestDispatcher dis = request.getRequestDispatcher("board/list.jsp");
-				dis.forward(request, response);			
-				
-			}else {
-				Script.back(response, "목록보기실패");
-			}
-				
-				
-			// request에 담고
-			// RequestDispathcer 만들어서 이동
+		} else if (cmd.equals("list")) {
+
+			int page = Integer.parseInt(request.getParameter("page"));
+			List<Board> boards = boardService.글목록보기(page);
+
+			request.setAttribute("boards", boards); // 앞이 키값 뒤가 데이터!// request에 담고
+			RequestDispatcher dis = request.getRequestDispatcher("board/list.jsp");// RequestDispathcer 만들어서 이동
+			dis.forward(request, response);
+
+		} else if (cmd.equals("detail")) {
+
 		}
-			
-		
-			
+
 	}
 
 }

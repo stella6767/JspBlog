@@ -20,20 +20,21 @@
 		<div class="progress-bar" style="width: 70%"></div>
 	</div>
 
-<c:forEach var="item" items="${boardlist}" >
+<c:forEach var="board" items="${boards}" >
 		<div class="card col-md-12 m-2">
 			<div class="card-body">
-				<h4 class="card-title">${item.title}</h4>
-				<a href="#" class="btn btn-primary">내용: ${item.content}</a>
+				<h4 class="card-title">${board.title}</h4>
+				<a href="/blog/board?cmd=detail&id=${board.id}" class="btn btn-primary">상세보기</a>
 			</div>
 		</div>
 </c:forEach>
 
 
 	<br />
+	<!-- disabled -->
 	<ul class="pagination justify-content-center">
-		<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-		<li class="page-item"><a class="page-link" href="#">Next</a></li>
+		<li class="page-item"><a class="page-link" href="/blog/board?cmd=list&page=${param.page-1}">Previous</a></li>
+		<li class="page-item"><a class="page-link" href="/blog/board?cmd=list&page=${param.page+1}">Next</a></li>
 	</ul>
 </div>
 

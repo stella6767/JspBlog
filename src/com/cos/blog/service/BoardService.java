@@ -21,9 +21,9 @@ public class BoardService {
 		
 	}
 	
-	public List<Board> 목록보기(){
+	public List<Board> 글목록보기(int page){
 	
-		return boardDao.findAll();
+		return boardDao.findAll(page);
 	}
 	
 	

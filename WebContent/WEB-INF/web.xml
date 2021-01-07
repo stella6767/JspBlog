@@ -20,7 +20,7 @@
 	
 	<filter>
 		<filter-name>forbiddenUrlConfig</filter-name>
-		<filter-class>com.cos.blog.config.AttackFilter</filter-class>
+		<filter-class>com.cos.blog.config.ForbiddenUrlConfig</filter-class>
 	</filter>
 	
 
