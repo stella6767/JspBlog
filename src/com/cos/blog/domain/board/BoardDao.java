@@ -12,6 +12,30 @@ import com.cos.blog.domain.board.dto.SaveReqDto;
 
 public class BoardDao {
 	
+	public int findAll2() {
+		String sql = "SELECT * FROM board "; 
+		Connection conn = DB.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int num = 0;
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) { // 커서를 이동하는 함수
+				num++;
+			}
+			
+			return num;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DB.close(conn, pstmt, rs);
+		}
+
+		return -1;
+		
+	}
 
 	public List<Board> findAll(int page) {
 		

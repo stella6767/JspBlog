@@ -77,8 +77,27 @@ public class BoardController extends HttpServlet {
 
 			int page = Integer.parseInt(request.getParameter("page"));
 			List<Board> boards = boardService.글목록보기(page);
-
 			request.setAttribute("boards", boards); // 앞이 키값 뒤가 데이터!// request에 담고
+			
+			//계산 (전체 데이터 수랑 한페이지 몇개-총 몇페이지 나와야되는지 계산. 3page라면 max값은 2
+			//page 2가 되는 순간 isEnd = true
+			
+			
+			int boardNum=boardService.전체데이터(); //머리가 안 돌아가서 이 방법밖에 생각이 안 남...
+			System.out.println(boardNum%4);
+			int max = boardNum%4-1;
+			
+			System.out.println("max값: "+max);
+			System.out.println("page 값: " + page);
+			
+			if(max == page) {
+				request.setAttribute("isEnd", true);
+			}
+			
+			if(page<=0) {
+				request.setAttribute("isStart", true);
+			}
+			
 			RequestDispatcher dis = request.getRequestDispatcher("board/list.jsp");// RequestDispathcer 만들어서 이동
 			dis.forward(request, response);
 

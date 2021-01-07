@@ -26,5 +26,10 @@ public class BoardService {
 		return boardDao.findAll(page);
 	}
 	
+	public int 전체데이터() {
+		
+		return boardDao.findAll2();
+	}
+	
 	
 }
