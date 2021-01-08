@@ -5,7 +5,11 @@
 
 <div class="container">
 
-	<button class="btn btn-danger" onclick="">삭제</button>
+	<c:if test="${sessionScope.principal.id == dto.userId}">
+		<!-- POST,GET,DELETE,PUT  //POST -->
+		<button class="btn btn-danger" onClick="deleteById(${dto.id})">삭제</button>
+	</c:if>
+
 	<br /> <br />
 	<h6 class="m-2">
 		작성자 : <i>${dto.username}</i> 조회수 : <i>${dto.readCount}</i>
@@ -63,6 +67,30 @@
 	</div>
 	<!-- 댓글 박스 끝 -->
 </div>
-
+<script>
+	function deleteById(boardId){
+		// ajax로 delete 요청 (Mehtod : POST)
+		//요청과 응답을 json으로
+		
+		var data = {boardId : boardId}
+		//var boardId = ${dto.id} // 이런식으로 쓰면, 나중에 js 파일과 jsp 파일을 분리해낼 수가 없다. 이렇게 하지말자.
+		
+		$.ajax({
+			type: "POST",
+			url: "/blog/board?cmd=delete",
+			data: JSON.stringify(data),
+			contentType: "application/json; charset=utf-8;", 
+			dataType: "json" 
+	
+		}).done(function(result){
+			console.log(result);
+			if(result.status=="ok"){
+				location.href="index.jsp";
+			}else{
+				alert("삭제에 실패하였습니다.");
+			}
+		})
+	}
+</script>
 </body>
 </html>

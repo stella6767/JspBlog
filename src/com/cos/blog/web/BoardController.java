@@ -1,6 +1,8 @@
 package com.cos.blog.web;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Vector;
 
@@ -13,11 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.cos.blog.domain.board.Board;
+import com.cos.blog.domain.board.dto.DeleteReqDto;
+import com.cos.blog.domain.board.dto.DeleteRespDto;
 import com.cos.blog.domain.board.dto.DetailRespDto;
 import com.cos.blog.domain.board.dto.SaveReqDto;
 import com.cos.blog.domain.user.User;
 import com.cos.blog.service.BoardService;
 import com.cos.blog.util.Script;
+import com.google.gson.Gson;
 
 //http://localhost:8080/blog/board
 @WebServlet("/board")
@@ -79,29 +84,58 @@ public class BoardController extends HttpServlet {
 			int page = Integer.parseInt(request.getParameter("page"));
 			List<Board> boards = boardService.글목록보기(page);
 			request.setAttribute("boards", boards); // 앞이 키값 뒤가 데이터!// request에 담고
-			
-			//계산 (전체 데이터 수랑 한페이지 몇개-총 몇페이지 나와야되는지 계산. 3page라면 max값은 2
-			//page 2가 되는 순간 isEnd = true
-			
+
+			// 계산 (전체 데이터 수랑 한페이지 몇개-총 몇페이지 나와야되는지 계산. 3page라면 max값은 2
+			// page 2가 되는 순간 isEnd = true
+
 			int boardCount = boardService.글개수();
 			System.out.println(boardCount);
-			int lastPage = (boardCount-1)/4;  // 2/4 = 0, 3/4 = 0, 4/4 = 1, 9/4 = 2 ( 0page, 1page, 2page) 
-			double currentPosition = (double)page/(lastPage)*100;
+			int lastPage = (boardCount - 1) / 4; // 2/4 = 0, 3/4 = 0, 4/4 = 1, 9/4 = 2 ( 0page, 1page, 2page)
+			double currentPosition = (double) page / (lastPage) * 100;
 
 			request.setAttribute("lastPage", lastPage);
 			request.setAttribute("currentPosition", currentPosition);
-		
+
 			RequestDispatcher dis = request.getRequestDispatcher("board/list.jsp");// RequestDispathcer 만들어서 이동
 			dis.forward(request, response);
 
 		} else if (cmd.equals("detail")) {
-			
+
 			int id = Integer.parseInt(request.getParameter("id"));
 			DetailRespDto dto = boardService.글상세보기(id);// board테이블+user테이블 = 조인된 데이터!!
-			request.setAttribute("dto", dto);
+
+			if (dto == null) {
+				Script.back(response, "상세보기에 실패하였습니다.");
+			} else {
+				request.setAttribute("dto", dto);
+				RequestDispatcher dis = request.getRequestDispatcher("board/detail.jsp");// RequestDispathcer 만들어서 이동
+				dis.forward(request, response);
+			}
+		} else if (cmd.equals("delete")) {
+			// 1. 요청 받은 json 데이터를 자바 오브젝트로 파싱
+			BufferedReader br = request.getReader();
+			String data = br.readLine();
 			
-			RequestDispatcher dis = request.getRequestDispatcher("board/detail.jsp");// RequestDispathcer 만들어서 이동
-			dis.forward(request, response);
+			Gson gson = new Gson();
+			DeleteReqDto dto = gson.fromJson(data, DeleteReqDto.class);
+			
+			
+			// 2. DB에서 id값으로 글 삭제
+			int result = boardService.글삭제(dto.getBoardId());
+
+			// 3. 응답할 json 데이터를 생성
+			DeleteRespDto respDto = new DeleteRespDto();
+			if(result == 1) {
+				respDto.setStatus("ok");
+			}else {
+				respDto.setStatus("fail");
+			}
+			String respData = gson.toJson(respDto);
+			System.out.println("respData : "+respData);
+			PrintWriter out = response.getWriter();
+			out.print(respData);
+			out.flush();
+			
 		}
 
 	}
