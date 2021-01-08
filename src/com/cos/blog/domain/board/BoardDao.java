@@ -8,12 +8,73 @@ import java.util.List;
 import java.util.Vector;
 
 import com.cos.blog.config.DB;
+import com.cos.blog.domain.board.dto.DetailRespDto;
 import com.cos.blog.domain.board.dto.SaveReqDto;
 
 public class BoardDao {
 	
-	public int findAll2() {
-		String sql = "SELECT * FROM board "; 
+	
+	public void 조회수증가(int id) {
+		String sql = "UPDATE board SET readCount=readCount+1 WHERE Id = ?";
+		
+		Connection conn = DB.getConnection();
+		PreparedStatement pstmt = null;
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, id);
+			pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DB.close(conn, pstmt);
+		}
+
+	}
+		
+	
+	
+	
+	public DetailRespDto findById(int id) {
+		
+		StringBuffer sb =new StringBuffer();
+		sb.append("select b.id, b.title, b.content, b.readCount, u.username ");
+		sb.append("from board b inner join user u ");
+		sb.append("on b.userId = u.id ");
+		sb.append("where b.id = ?");
+		
+		String sql = sb.toString();
+		Connection conn = DB.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, id);
+			rs = pstmt.executeQuery();
+			if(rs.next()) { // 커서를 이동하는 함수
+				DetailRespDto dto = new DetailRespDto();
+				dto.setId(rs.getInt("b.id"));
+				dto.setTitle(rs.getString("b.title"));
+				dto.setContent(rs.getString("b.content"));
+				dto.setReadCount(rs.getInt("b.readCount"));
+				dto.setUsername(rs.getString("u.username"));
+				return dto;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DB.close(conn, pstmt, rs);
+		}
+
+		return null;
+	}
+	
+	
+	public int count() {
+		String sql = "SELECT count(*),id FROM board "; 
 		Connection conn = DB.getConnection();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -22,11 +83,10 @@ public class BoardDao {
 		try {
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
-			while (rs.next()) { // 커서를 이동하는 함수
-				num++;
+			if (rs.next()) { // 커서를 이동하는 함수
+				return rs.getInt(1);
 			}
-			
-			return num;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

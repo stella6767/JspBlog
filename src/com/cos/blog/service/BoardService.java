@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import com.cos.blog.domain.board.Board;
 import com.cos.blog.domain.board.BoardDao;
+import com.cos.blog.domain.board.dto.DetailRespDto;
 import com.cos.blog.domain.board.dto.SaveReqDto;
 
 public class BoardService {
@@ -26,9 +27,17 @@ public class BoardService {
 		return boardDao.findAll(page);
 	}
 	
-	public int 전체데이터() {
+	public int 글개수() {
 		
-		return boardDao.findAll2();
+		return boardDao.count();
+	}
+	
+	public DetailRespDto 글상세보기(int id) {
+		//조회수 업데이트 치기
+		
+		boardDao.조회수증가(id);
+		return boardDao.findById(id);
+		
 	}
 	
 	
