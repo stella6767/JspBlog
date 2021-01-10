@@ -70,27 +70,19 @@
 </div>
 <script>
 	function deleteById(boardId){
-		// ajax로 delete 요청 (Mehtod : POST)
-		//요청과 응답을 json으로
-		
-		var data = {boardId : boardId}
-		//var boardId = ${dto.id} // 이런식으로 쓰면, 나중에 js 파일과 jsp 파일을 분리해낼 수가 없다. 이렇게 하지말자.
-		
+
 		$.ajax({
 			type: "POST",
-			url: "/blog/board?cmd=delete",
-			data: JSON.stringify(data),
-			contentType: "application/json; charset=utf-8;", 
+			url: "/blog/board?cmd=delete&id="+boardId,
 			dataType: "json" 
-	
 		}).done(function(result){
 			console.log(result);
-			if(result.status=="ok"){
+			if(result.statusCode==1){
 				location.href="index.jsp";
 			}else{
 				alert("삭제에 실패하였습니다.");
 			}
-		})
+		});
 	}
 </script>
 </body>

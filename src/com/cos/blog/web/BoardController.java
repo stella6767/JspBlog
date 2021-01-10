@@ -1,10 +1,8 @@
 package com.cos.blog.web;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,8 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.cos.blog.domain.board.Board;
-import com.cos.blog.domain.board.dto.DeleteReqDto;
-import com.cos.blog.domain.board.dto.DeleteRespDto;
+import com.cos.blog.domain.board.dto.CommonRespDto;
 import com.cos.blog.domain.board.dto.DetailRespDto;
 import com.cos.blog.domain.board.dto.SaveReqDto;
 import com.cos.blog.domain.board.dto.UpdateReqDto;
@@ -113,29 +110,20 @@ public class BoardController extends HttpServlet {
 				dis.forward(request, response);
 			}
 		} else if (cmd.equals("delete")) {
-			// 1. 요청 받은 json 데이터를 자바 오브젝트로 파싱
-			BufferedReader br = request.getReader();
-			String data = br.readLine();
+			int id = Integer.parseInt(request.getParameter("id"));
 			
-			Gson gson = new Gson(); //나중에 아이디 중복체크도 제이슨으로 던지도록 수정
-			DeleteReqDto dto = gson.fromJson(data, DeleteReqDto.class);
+			int result = boardService.글삭제(id);
 			
+			CommonRespDto<String> commonRespDto = new CommonRespDto<>();
+			commonRespDto.setStatusCode(result);
+			commonRespDto.setData("성공"); //여기서 if문으로 분기해야되는 거 아닌가?
 			
-			// 2. DB에서 id값으로 글 삭제
-			int result = boardService.글삭제(dto.getBoardId());
-
-			// 3. 응답할 json 데이터를 생성
-			DeleteRespDto respDto = new DeleteRespDto();
-			if(result == 1) {
-				respDto.setStatus("ok");
-			}else {
-				respDto.setStatus("fail");
-			}
-			String respData = gson.toJson(respDto);
+			Gson gson = new Gson();
+			String respData = gson.toJson(commonRespDto);
 			System.out.println("respData : "+respData);
 			PrintWriter out = response.getWriter();
 			out.print(respData);
-			out.flush();
+			
 			
 		}else if(cmd.equals("updateForm")) {
 			int id = Integer.parseInt(request.getParameter("id"));
@@ -161,6 +149,7 @@ public class BoardController extends HttpServlet {
 				
 				request.setAttribute("dto", dto);
 				RequestDispatcher dis = request.getRequestDispatcher("/board?cmd=detail&id="+id);
+				//RequestDispatcher dis = request.getRequestDispatcher("board/detail.jsp");
 				dis.forward(request, response);	
 				
 				//response.sendRedirect("/blog/board?cmd=detail&id="+id);
