@@ -19,6 +19,7 @@ import com.cos.blog.domain.board.dto.DeleteReqDto;
 import com.cos.blog.domain.board.dto.DeleteRespDto;
 import com.cos.blog.domain.board.dto.DetailRespDto;
 import com.cos.blog.domain.board.dto.SaveReqDto;
+import com.cos.blog.domain.board.dto.UpdateReqDto;
 import com.cos.blog.domain.user.User;
 import com.cos.blog.service.BoardService;
 import com.cos.blog.util.Script;
@@ -116,7 +117,7 @@ public class BoardController extends HttpServlet {
 			BufferedReader br = request.getReader();
 			String data = br.readLine();
 			
-			Gson gson = new Gson();
+			Gson gson = new Gson(); //나중에 아이디 중복체크도 제이슨으로 던지도록 수정
 			DeleteReqDto dto = gson.fromJson(data, DeleteReqDto.class);
 			
 			
@@ -136,7 +137,41 @@ public class BoardController extends HttpServlet {
 			out.print(respData);
 			out.flush();
 			
+		}else if(cmd.equals("updateForm")) {
+			int id = Integer.parseInt(request.getParameter("id"));
+			DetailRespDto dto = boardService.글상세보기(id);
+			request.setAttribute("dto", dto);
+			RequestDispatcher dis = request.getRequestDispatcher("board/updateForm.jsp");
+			dis.forward(request, response);		
+		}else if(cmd.equals("update")) {
+			int id = Integer.parseInt(request.getParameter("id"));
+			String title = request.getParameter("title");
+			String content = request.getParameter("content");
+
+			UpdateReqDto dto = new UpdateReqDto();
+			dto.setId(id);
+			dto.setTitle(title);
+			dto.setContent(content);
+
+			int result = boardService.글수정(dto);
+
+			if(result == 1) {
+				// 고민해보세요. 왜 RequestDispatcher 안썻는지... 한번 써보세요. detail.jsp 호출 ?
+				
+				
+				request.setAttribute("dto", dto);
+				RequestDispatcher dis = request.getRequestDispatcher("/board?cmd=detail&id="+id);
+				dis.forward(request, response);	
+				
+				//response.sendRedirect("/blog/board?cmd=detail&id="+id);
+			}else {
+				Script.back(response,"글 수정에 실패하였습니다.");
+			}
+			
+			
 		}
+		
+		
 
 	}
 

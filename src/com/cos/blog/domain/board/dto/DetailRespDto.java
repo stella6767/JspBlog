@@ -10,7 +10,7 @@ public class DetailRespDto {
 	private String content;
 	private int readCount;
 	private String username;
-	private int userId;
+	private int userId; //추가 (글 삭제 권한주기위해)
 
 //	// 루시 필터 적용해보기
 //	public String getTitle() {
