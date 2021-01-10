@@ -17,6 +17,16 @@ public class BoardService {
 		boardDao = new BoardDao();
 	}
 	
+	public int 키워드글개수(String keyword) {
+
+		return boardDao.countByKeyword(keyword);
+	}
+	
+	public List<Board> 글찾기(String keyword, int page) {
+		return boardDao.findByKeyword(keyword, page);
+		
+	}
+	
 	public int 글수정(UpdateReqDto dto) {		
 		return boardDao.update(dto);
 	}

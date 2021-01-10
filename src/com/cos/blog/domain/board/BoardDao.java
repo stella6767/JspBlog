@@ -14,6 +14,67 @@ import com.cos.blog.domain.board.dto.UpdateReqDto;
 
 public class BoardDao {
 	
+	public int countByKeyword(String keyword) {
+		String sql = "SELECT count(*),id FROM board where title like ? or content like ?";
+		Connection conn = DB.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int num = 0;
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, "%" + keyword + "%");// 0 -> 0, 1 ->4, 2->8			
+			pstmt.setString(2, "%" + keyword + "%");
+			rs = pstmt.executeQuery();
+			if (rs.next()) { // 커서를 이동하는 함수
+				return rs.getInt(1);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DB.close(conn, pstmt, rs);
+		}
+
+		return -1;
+
+	}
+	
+	public List<Board> findByKeyword(String keyword,int page) {
+
+		// SELECT 해서 Board 객체를 컬렉션에 담아서 리턴
+		String sql = "SELECT * FROM board where title like ? or content like ? ORDER BY Id DESC LIMIT ?,4"; // 0,4 4,4 8,4
+		Connection conn = DB.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		List<Board> boards = new ArrayList<>();
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, "%" + keyword + "%");// 0 -> 0, 1 ->4, 2->8			
+			pstmt.setString(2, "%" + keyword + "%");
+			pstmt.setInt(3, page * 4);
+			rs = pstmt.executeQuery();
+			while (rs.next()) { // 커서를 이동하는 함수
+				Board board = Board.builder().id(rs.getInt("id")).title(rs.getString("title"))
+						.content(rs.getString("content")).readCount(rs.getInt("readCount")).userId(rs.getInt("userId"))
+						.createDate(rs.getTimestamp("createDate")).build();
+				boards.add(board);
+			}
+
+			return boards;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DB.close(conn, pstmt, rs);
+		}
+
+		return null;
+	}
+	
+	
+	
+	
 	public int update(UpdateReqDto dto) {
 		String sql = "UPDATE board SET title = ?, content = ? WHERE id = ?";
 		Connection conn = DB.getConnection();
