@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ include file="../layout/header.jsp"%>
 
@@ -7,7 +6,7 @@
 
 	<c:if test="${sessionScope.principal.id == dto.userId}">
 		<!-- POST,GET,DELETE,PUT  //POST -->
-		<a href="/blog/board?cmd=updateForm&id=${dto.id}" class="btn btn-warning" >수정</a>
+		<a href="/blog/board?cmd=updateForm&id=${dto.id}" class="btn btn-warning">수정</a>
 		<button class="btn btn-danger" onClick="deleteById(${dto.id})">삭제</button>
 	</c:if>
 
@@ -35,10 +34,14 @@
 						<b>Comment</b>
 					</div>
 					<div class="panel-body">
-						<textarea id="reply__write__form" class="form-control"
-							placeholder="write a comment..." rows="2"></textarea>
+
+						<input type="hidden" name="userId" value="${sessionScope.principal.id}" /> <input type="hidden" name="boardId" value="${dto.id}" />
+						<textarea id="content" id="reply__write__form" class="form-control" placeholder="write a comment..." rows="2"></textarea>
+
 						<br>
-						<button onclick="#" class="btn btn-primary pull-right">댓글쓰기</button>
+						<button onClick="replySave(${sessionScope.principal.id}, ${dto.id})" class="btn btn-primary pull-right">댓글쓰기</button>
+
+
 						<div class="clearfix"></div>
 						<hr />
 
@@ -84,6 +87,41 @@
 			}
 		});
 	}
+
+
+	function replySave(userId, boardId){
+		console.log(1,$("#content").text());
+		console.log(1,$("#content").val());
+
+		
+		var data = {
+			userId:userId,
+			boardId: boardId,
+			content: $("#content").val()
+
+		}
+	
+	$.ajax({
+			type: "post",
+			url: "/blog/reply?cmd=save",
+			data: JSON.stringify(data),
+			contentType: "application/json; charset=utf-8;",
+			dataType: "json" 
+			
+		}).done(function(result){
+
+			if(result.statusCode == 1){
+				$("#reply__list").prepend("<div>"+data.content+"</div>")
+			}else{
+				alert("댓글쓰기 실패");
+
+			}
+
+
+		});
+		
+	}
+
 </script>
 </body>
 </html>

@@ -45,8 +45,8 @@
 			</c:when>
 			<c:otherwise>
 				<c:choose>
-					<c:when test="${param.keyword== ''} ">
-						<li class="page-item"><a class="page-link" href="/blog/board?cmd=list&page=${param.page+1}&keyword=${param.keyword}">Next</a></li>
+					<c:when test="${param.keyword==null} ">
+						<li class="page-item"><a class="page-link" href="/blog/board?cmd=list&page=${param.page+1}&test=3">Next</a></li>
 					</c:when>
 					<c:otherwise>
 						<li class="page-item"><a class="page-link" href="/blog/board?cmd=search&page=${param.page+1}&keyword=${param.keyword}">Next</a></li>
