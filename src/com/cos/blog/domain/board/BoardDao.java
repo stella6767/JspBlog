@@ -14,7 +14,7 @@ import com.cos.blog.domain.board.dto.UpdateReqDto;
 
 public class BoardDao {
 	
-	public int countByKeyword(String keyword) {
+	public int count(String keyword) {
 		String sql = "SELECT count(*),id FROM board where title like ? or content like ?";
 		Connection conn = DB.getConnection();
 		PreparedStatement pstmt = null;

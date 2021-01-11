@@ -17,12 +17,12 @@ public class BoardService {
 		boardDao = new BoardDao();
 	}
 	
-	public int 키워드글개수(String keyword) {
+	public int 글개수(String keyword) {
 
-		return boardDao.countByKeyword(keyword);
+		return boardDao.count(keyword);
 	}
 	
-	public List<Board> 글찾기(String keyword, int page) {
+	public List<Board> 글검색(String keyword, int page) {
 		return boardDao.findByKeyword(keyword, page);
 		
 	}

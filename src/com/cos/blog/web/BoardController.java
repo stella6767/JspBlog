@@ -175,28 +175,23 @@ public class BoardController extends HttpServlet {
 			
 			
 		}else if(cmd.equals("search")) {
-			
 			String keyword = request.getParameter("keyword");
 			int page = Integer.parseInt(request.getParameter("page"));
-			
-			System.out.println("search문: " + keyword);
-			System.out.println("page:  " +page);
-			
-			List<Board> boards = boardService.글찾기(keyword, page);
+
+			List<Board> boards = boardService.글검색(keyword, page);
 			request.setAttribute("boards", boards);
-			
-			int boardCount = boardService.키워드글개수(keyword);
-			System.out.println(boardCount);
-			int lastPage = (boardCount - 1) / 4; // 2/4 = 0, 3/4 = 0, 4/4 = 1, 9/4 = 2 ( 0page, 1page, 2page)
-			double currentPosition = (double) page / (lastPage) * 100;
+
+			int boardCount = boardService.글개수(keyword);
+			int lastPage = (boardCount-1)/4; // 2/4 = 0, 3/4 = 0, 4/4 = 1, 9/4 = 2 ( 0page, 1page, 2page) 
+			double currentPosition = (double)page/(lastPage)*100;
+
+
 
 			request.setAttribute("lastPage", lastPage);
 			request.setAttribute("currentPosition", currentPosition);
-			
 			RequestDispatcher dis = request.getRequestDispatcher("board/list.jsp");
-			dis.forward(request, response);	
+			dis.forward(request, response);
 		}
-		
 		
 		
 		
