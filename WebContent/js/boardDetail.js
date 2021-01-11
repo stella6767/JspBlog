@@ -55,7 +55,8 @@ function replySave(userId, boardId) {
 
 		if (result.statusCode == 1) {
 			console.log(result);
-			addReply(result.data);
+			//addReply(result.data);
+			location.reload();
 		} else {
 			alert("댓글쓰기 실패");
 		}
