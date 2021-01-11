@@ -89,15 +89,14 @@ public class ReplyController extends HttpServlet {
 			
 			int result = replyService.댓글삭제(id);
 			
-			CommonRespDto<String> commonRespDto = new CommonRespDto<>();
+			CommonRespDto commonRespDto = new CommonRespDto<>();
 			commonRespDto.setStatusCode(result);
-			commonRespDto.setData("성공"); //여기서 if문으로 분기해야되는 거 아닌가?
-			
+
 			Gson gson = new Gson();
-			String respData = gson.toJson(commonRespDto);
-			System.out.println("respData : "+respData);
-			PrintWriter out = response.getWriter();
-			out.print(respData);
+			String jsonData = gson.toJson(commonRespDto);
+			System.out.println("jsonData : "+jsonData);
+			Script.responseData(response, jsonData);
+			
 			
 		}
 

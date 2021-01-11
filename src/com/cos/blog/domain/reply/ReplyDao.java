@@ -13,13 +13,21 @@ import com.cos.blog.domain.reply.dto.SaveRespDto;
 
 public class ReplyDao {
 	
-	public List<Reply> findAll(int boardId){
-		String sql = "SELECT * FROM reply WHERE boardId = ? ORDER BY id DESC";
+	public List<SaveRespDto> findAll(int boardId){
+		//String sql = "SELECT * FROM reply WHERE boardId = ? ORDER BY id DESC";
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT r.*, u.username ");
+		sb.append("FROM reply r inner join user u ");
+		sb.append("on r.userid = u.id ");
+		sb.append("WHERE r.boardId = ? ORDER BY r.id DESC");
+		String sql = sb.toString();
+		
+		
 		Connection conn = DB.getConnection();
 		PreparedStatement pstmt = null;
 		ResultSet rs  = null;
 
-		List<Reply> replys = new ArrayList<>();
+		List<SaveRespDto> replys = new ArrayList<>();
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, boardId);
@@ -27,11 +35,13 @@ public class ReplyDao {
 
 			// Persistence API
 			while(rs.next()) { // 커서를 이동하는 함수
-				Reply reply = new Reply();
+				SaveRespDto reply = new SaveRespDto();
 				reply.setId(rs.getInt("id"));
 				reply.setUserId(rs.getInt("userId"));
 				reply.setBoardId(rs.getInt("boardId"));
 				reply.setContent(rs.getString("content"));
+				reply.setCreateDate(rs.getTimestamp("createDate"));
+				reply.setUsername(rs.getString("u.username"));
 				replys.add(reply);
 			}
 			return replys;
@@ -50,6 +60,7 @@ public class ReplyDao {
 		String sql = "DELETE FROM reply WHERE id = ?";
 		Connection conn = DB.getConnection();
 		PreparedStatement pstmt = null;
+		ResultSet rs =null;
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, id);

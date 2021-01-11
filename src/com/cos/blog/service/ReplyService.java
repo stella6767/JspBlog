@@ -14,7 +14,7 @@ public class ReplyService {
 		replyDao = new ReplyDao();
 	}
 
-	public List<Reply> 글목록보기(int boardId){
+	public List<SaveRespDto> 글목록보기(int boardId){
 		return replyDao.findAll(boardId);
 	}
 	

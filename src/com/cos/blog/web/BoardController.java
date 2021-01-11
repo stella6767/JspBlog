@@ -18,6 +18,7 @@ import com.cos.blog.domain.board.dto.DetailRespDto;
 import com.cos.blog.domain.board.dto.SaveReqDto;
 import com.cos.blog.domain.board.dto.UpdateReqDto;
 import com.cos.blog.domain.reply.Reply;
+import com.cos.blog.domain.reply.dto.SaveRespDto;
 import com.cos.blog.domain.user.User;
 import com.cos.blog.service.BoardService;
 import com.cos.blog.service.ReplyService;
@@ -108,7 +109,9 @@ public class BoardController extends HttpServlet {
 
 			int id = Integer.parseInt(request.getParameter("id"));
 			DetailRespDto dto = boardService.글상세보기(id);// board테이블+user테이블 = 조인된 데이터!!
-			List<Reply> replys = replyService.글목록보기(id);
+			
+			List<SaveRespDto> replys = replyService.글목록보기(id);
+			//List<Reply> replys = replyService.글목록보기(id);
 			
 			
 			if (dto == null) {

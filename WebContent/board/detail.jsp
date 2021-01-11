@@ -53,13 +53,13 @@
 								<!-- 댓글 아이템 -->
 								<li id="reply-1" class="media">
 									<div class="media-body">
-										<strong class="text-primary">${reply.userId}</strong>
+										<strong class="text-primary">${reply.username}</strong>
 										<p>${reply.content}</p>
 									</div>
 									<div class="m-2">
-
-										<i onclick="deleteReply(${reply.id})" class="material-icons">delete</i>
-
+										<c:if test="${sessionScope.principal.id == reply.userId }">
+											<i onclick="deleteReply(${reply.id})" class="material-icons">delete</i>
+										</c:if>
 									</div>
 								</li>
 

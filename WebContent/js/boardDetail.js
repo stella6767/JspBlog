@@ -19,12 +19,16 @@ function deleteReply(id) {
 	//alert("댓글 아이디 : " + id);
 
 	$.ajax({
-		url: "/blog/reply?cmd=delete&id=" + id
+		type : "post",
+		url : "/blog/reply?cmd=delete&id="+id,
+		dataType: "json"
+		
+		//url: "/blog/reply?cmd=delete&id=" + id
 
 	}).done(function(result) {
 		if (result.statusCode == 1) {
 			console.log(result);
-			alert("댓글 삭제 성공");
+			$("#reply-"+id).remove();
 		} else {
 			alert("댓글 삭제 실패");
 		}
@@ -47,6 +51,7 @@ function replySave(userId, boardId) {
 	$.ajax({
 		type: "post",
 		url: "/blog/reply?cmd=save",
+		//url: "/blog/board?cmd=list&userId",
 		data: JSON.stringify(data),
 		contentType: "application/json; charset=utf-8;",
 		dataType: "json"
@@ -56,7 +61,10 @@ function replySave(userId, boardId) {
 		if (result.statusCode == 1) {
 			console.log(result);
 			//addReply(result.data);
-			location.reload();
+			//location.reload();
+			
+			addReply(result.data);
+			$("#content").val("");
 		} else {
 			alert("댓글쓰기 실패");
 		}
