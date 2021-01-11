@@ -19,6 +19,7 @@ import com.cos.blog.domain.board.dto.SaveReqDto;
 import com.cos.blog.domain.board.dto.UpdateReqDto;
 import com.cos.blog.domain.user.User;
 import com.cos.blog.service.BoardService;
+import com.cos.blog.util.MakeYoutube;
 import com.cos.blog.util.Script;
 import com.google.gson.Gson;
 
@@ -65,7 +66,10 @@ public class BoardController extends HttpServlet {
 			int userId = Integer.parseInt(request.getParameter("userId"));
 			String title = request.getParameter("title");
 			String content = request.getParameter("content");
-
+			
+			MakeYoutube mk = new MakeYoutube();			
+			content = mk.makeYoutube(content); // 되나?
+						
 			SaveReqDto dto = new SaveReqDto();
 			dto.setUserId(userId);
 			dto.setTitle(title);
@@ -109,6 +113,9 @@ public class BoardController extends HttpServlet {
 				RequestDispatcher dis = request.getRequestDispatcher("board/detail.jsp");// RequestDispathcer 만들어서 이동
 				dis.forward(request, response);
 			}
+			
+			
+			
 		} else if (cmd.equals("delete")) {
 			int id = Integer.parseInt(request.getParameter("id"));
 			

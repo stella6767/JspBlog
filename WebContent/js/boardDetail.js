@@ -1,0 +1,84 @@
+
+function addReply(data) {
+
+	var replyItem = `<li id="reply-${data.id}" class="media">`;
+	replyItem += `<div class="media-body">`;
+	replyItem += `<strong class="text-primary">${data.username}</strong>`;
+	replyItem += `<p>${data.content}</p></div>`;
+	replyItem += `<div class="m-2">`;
+	//replyItem += ` <c:if test="${data. == data.userId}">`;
+	replyItem += `<i onclick="deleteReply(${data.id})" class="material-icons">delete</i></div></li>`;
+	//replyItem += `</c:if>`;
+	
+	$("#reply__list").prepend(replyItem);
+
+}
+
+function deleteReply(id) {
+	// 세션의 유저의 id와 reply의 userId를 비교해서 같을때만!!
+	//alert("댓글 아이디 : " + id);
+
+	$.ajax({
+		url: "/blog/reply?cmd=delete&id=" + id
+
+	}).done(function(result) {
+		if (result.statusCode == 1) {
+			console.log(result);
+			alert("댓글 삭제 성공");
+		} else {
+			alert("댓글 삭제 실패");
+		}
+
+	});
+
+
+}
+
+function replySave(userId, boardId) {
+	console.log(1, $("#content").text());
+	console.log(1, $("#content").val());
+
+	var data = {
+		userId: userId,
+		boardId: boardId,
+		content: $("#content").val()
+	}
+
+	$.ajax({
+		type: "post",
+		url: "/blog/reply?cmd=save",
+		data: JSON.stringify(data),
+		contentType: "application/json; charset=utf-8;",
+		dataType: "json"
+
+	}).done(function(result) {
+
+		if (result.statusCode == 1) {
+			console.log(result);
+			addReply(result.data);
+		} else {
+			alert("댓글쓰기 실패");
+		}
+	});
+
+}
+
+
+function deleteById(boardId) {
+
+	$.ajax({
+		type: "POST",
+		url: "/blog/board?cmd=delete&id=" + boardId,
+		dataType: "json"
+	}).done(function(result) {
+		console.log(result);
+		if (result.statusCode == 1) {
+			location.href = "index.jsp";
+		} else {
+			alert("삭제에 실패하였습니다.");
+		}
+	});
+}
+
+
+
